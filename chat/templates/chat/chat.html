@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        /* CSS for the chat room interface */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .chat-room {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-room-header {
+            background-color: #f5f5f5;
+            padding: 10px 20px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .chat-room-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .chat-room-body {
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+        }
+
+        .chat-message .sender {
+            font-weight: bold;
+        }
+
+        .chat-message .timestamp {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .chat-input {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-room">
+        <div class="chat-room-header">
+            <h2>Chat Room: {{ room_name }}</h2>
+        </div>
+        <div class="chat-room-body" id="chat-room-body">
+            <!-- Chat messages will be appended here dynamically -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript code for the chat room functionality
+
+        const chatRoomBody = document.getElementById('chat-room-body');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        // WebSocket connection
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const wsURL = `${wsProtocol}${window.location.host}/ws/chat/${room_name}/`;
+        const chatSocket = new WebSocket(wsURL);
+
+        // Event listener for WebSocket connection open
+        chatSocket.onopen = (event) => {
+            console.log('WebSocket connection established');
+        };
+
+        // Event listener for WebSocket messages
+        chatSocket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            displayMessage(message);
+        };
+
+        // Event listener for WebSocket connection close
+        chatSocket.onclose = (event) => {
+            console.log('WebSocket connection closed');
+        };
+
+        // Function to send a message through WebSocket
+        const sendMessage = () => {
+            const messageContent = messageInput.value.trim();
+            if (messageContent !== '') {
+                const message = {
+                    'message': messageContent
+                };
+                chatSocket.send(JSON.stringify(message));
+                messageInput.value = '';
+            }
+        };
+
+        // Function to display a message in the chat room
+        const displayMessage = (message) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.innerHTML = `
+                <span class="sender">${message.sender}</span>
+                <span class="timestamp">${message.timestamp}</span>
+                <p>${message.message}</p>
+            `;
+            chatRoomBody.appendChild(messageElement);
+
+            // Scroll to the bottom of the chat room
+            chatRoomBody.scrollTop = chatRoomBody.scrollHeight;
+        };
+
+        // Event listener for send button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Event listener for Enter key press in the message input field
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
