@@ -7,4 +7,3 @@ def chat_room(request, room_name):
 
 def home(request):
     return render(request, 'chat/home.html')
-
