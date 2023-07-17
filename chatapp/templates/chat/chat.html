@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        /* CSS styles for the chat room UI */
+        /* ... */
+    </style>
+</head>
+<body>
+    <div class="chat-room">
+        <div class="chat-room-header">
+            <h2>Chat Room: My Chat Room</h2>
+        </div>
+        <div class="chat-room-body">
+            <!-- Chat message display area -->
+            <div class="chat-message">
+                <span class="sender">John:</span>
+                <span class="timestamp">10:30 AM</span>
+                <p>Hello, how are you?</p>
+            </div>
+            <!-- ... Other chat messages ... -->
+        </div>
+        <div class="chat-input">
+            <!-- Input field for typing messages -->
+            <input type="text" id="message-input" placeholder="Type your message">
+            <!-- Button to send the message -->
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // J<script>
+    // JavaScript code for the chat room functionality
+
+    const chatRoomBody = document.getElementById('chat-room-body');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    // WebSocket connection
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const wsURL = `${wsProtocol}${window.location.host}/ws/chat/${room_name}/`;
+    const chatSocket = new WebSocket(wsURL);
+
+    // Event listener for WebSocket connection open
+    chatSocket.onopen = (event) => {
+        console.log('WebSocket connection established');
+    };
+
+    // Event listener for WebSocket messages
+    chatSocket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        displayMessage(message);
+    };
+
+    // Event listener for WebSocket connection close
+    chatSocket.onclose = (event) => {
+        console.log('WebSocket connection closed');
+    };
+
+    // Function to send a message through WebSocket
+    const sendMessage = () => {
+        const messageContent = messageInput.value.trim();
+        if (messageContent !== '') {
+            const message = {
+                'message': messageContent
+            };
+            chatSocket.send(JSON.stringify(message));
+            messageInput.value = '';
+        }
+    };
+
+    // Function to display a message in the chat room
+    const displayMessage = (message) => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message');
+        messageElement.innerHTML = `
+            <span class="sender">${message.sender}</span>
+            <span class="timestamp">${message.timestamp}</span>
+            <p>${message.message}</p>
+        `;
+        chatRoomBody.appendChild(messageElement);
+
+        // Scroll to the bottom of the chat room
+        chatRoomBody.scrollTop = chatRoomBody.scrollHeight;
+    };
+
+    // Event listener for send button click
+    sendButton.addEventListener('click', sendMessage);
+
+    // Event listener for Enter key press in the message input field
+    messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    <script>
+        // JavaScript code for the chat room functionality
+    
+        const chatRoomBody = document.getElementById('chat-room-body');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+    
+        // WebSocket connection
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const wsURL = `${wsProtocol}${window.location.host}/ws/chat/${room_name}/`;
+        const chatSocket = new WebSocket(wsURL);
+    
+        // Event listener for WebSocket connection open
+        chatSocket.onopen = (event) => {
+            console.log('WebSocket connection established');
+        };
+    
+        // Event listener for WebSocket messages
+        chatSocket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            displayMessage(message);
+        };
+    
+        // Event listener for WebSocket connection close
+        chatSocket.onclose = (event) => {
+            console.log('WebSocket connection closed');
+        };
+    
+        // Function to send a message through WebSocket
+        const sendMessage = () => {
+            const messageContent = messageInput.value.trim();
+            if (messageContent !== '') {
+                const message = {
+                    'message': messageContent
+                };
+                chatSocket.send(JSON.stringify(message));
+                messageInput.value = '';
+            }
+        };
+    
+        // Function to display a message in the chat room
+        const displayMessage = (message) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            messageElement.innerHTML = `
+                <span class="sender">${message.sender}</span>
+                <span class="timestamp">${message.timestamp}</span>
+                <p>${message.message}</p>
+            `;
+            chatRoomBody.appendChild(messageElement);
+    
+            // Scroll to the bottom of the chat room
+            chatRoomBody.scrollTop = chatRoomBody.scrollHeight;
+        };
+    
+        // Event listener for send button click
+        sendButton.addEventListener('click', sendMessage);
+    
+        // Event listener for Enter key press in the message input field
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+    
+</body>
+</html>
