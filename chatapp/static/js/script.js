@@ -2,6 +2,9 @@ const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 const chatMessages = document.getElementById('chat-messages');
 
+
+let ws;
+
 // Function to add a new message to the chat window
 function addMessage(message) {
   const messageElement = document.createElement('div');
@@ -28,3 +31,33 @@ messageInput.addEventListener('keypress', (event) => {
     event.preventDefault();
   }
 });
+
+function init() {
+    if (ws) {
+        ws.onerror = ws.onopen = ws.onclose =null;
+        ws.onclose();
+    }
+
+    ws = new WebSocket('ws//localhost:8080');
+    ws.onopen = () => {
+
+        console.log('Connection Opened!');
+        //let username=prompt("Please enter your name:");
+    }
+
+    ws.onmessage = ({ data }) => showMessage(data);
+    ws.onclose = function() {
+        ws = null;
+    }
+
+    sendButton.onclick = function() {
+        if (!ws) {
+            showMessage('No WebSocket connection :');
+            return ;
+        }
+
+        ws.send(messageBox.value);
+        showMessage(messageBox.value);
+    }
+    init();
+    }
