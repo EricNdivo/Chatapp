@@ -19,3 +19,13 @@ application = ProtocolTypeRouter({
     'http': get_asgi_application(),
     'websocket': URLRouter(chatapp.routing.websocket_urlpatterns),
 })
+
+
+#ASGI SERVER  UPDATE
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project.settings')
+
+application = ProtocolTypeRouter({
+    'http': get_asgi_application(),
+    'websocket': URLRouter(chatapp.routing.websocket_urlpatterns),
+})
