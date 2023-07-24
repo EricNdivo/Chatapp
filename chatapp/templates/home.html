@@ -13,6 +13,7 @@
     </div>
     <div id="user-input">
       <input type="text" id="message-input" placeholder="Type your message...">
+      <a href="{% url 'download_profile_picture' user_id=user.id %}">Download Profile Picture</a>
       <button id="send-button">Send</button>
     </div>
   </div>
